@@ -1,0 +1,69 @@
+Here’s a **ready-to-paste prompt** you can give to [v0](https://v0.dev) so it can quickly generate the first draft of your admin dashboard.
+Feel free to tweak names or wording if you have a specific design vibe in mind.
+
+---
+
+**Prompt for v0**
+
+> Build a clean, modern **web dashboard for the company’s attendance system**.
+> Use the following **FastAPI endpoints** as the data source:
+>
+> **Admin Authentication**
+>
+> * `POST /v1/admin/auth/login` – Admin login
+> * `GET /v1/admin/auth/me` – Get current admin info
+>
+> **Employee Management**
+>
+> * `GET /v1/admin/employees` – List employees
+> * `POST /v1/admin/employees` – Create employee
+> * `GET /v1/admin/employees/{employee_id}` – Get single employee
+> * `PUT /v1/admin/employees/{employee_id}` – Update employee
+> * `DELETE /v1/admin/employees/{employee_id}` – Delete employee
+>
+> **Mobile Endpoints (for reference)**
+>
+> * `GET /v1/mobile/health`
+> * `POST /v1/mobile/employees/{employee_id}/facial-biometrics/upload`
+>
+> ---
+>
+> ### Pages & Features
+>
+> **1. Login Page**
+>
+> * Simple form with email + password.
+> * After login, fetch current admin info using `/v1/admin/auth/me`.
+>
+> **2. Dashboard (Home)**
+>
+> * Welcome header with admin name and today’s date.
+> * Quick stats cards: total employees, employees checked in today, late arrivals.
+> * Simple attendance summary chart (use mock data if attendance endpoint not yet ready).
+>
+> **3. Employees Page**
+>
+> * Table listing all employees (name, photo placeholder, ID).
+> * Buttons to view, edit, or delete.
+> * “Add Employee” form with fields: name, email,phone, position, department, salary.
+> * For each employee detail view: show their unique ID and a **downloadable QR code** (use a QR code library to generate from employee\_id).
+>
+> **4. Settings / Admin Profile**
+>
+> * View or update basic admin info pulled from `/v1/admin/auth/me`.
+>
+> ---
+>
+> ### Style & UX
+>
+> * Modern, clean look (think Tailwind + simple card layout).
+> * Responsive design (desktop & tablet).
+> * Clear action buttons and easy navigation via a left sidebar.
+>
+> ---
+>
+> Use placeholders or mock data for attendance trends until related endpoints are ready.
+> Focus on making the UI components reusable so it’s easy to hook up more endpoints later.
+
+---
+
