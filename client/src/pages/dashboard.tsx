@@ -21,7 +21,14 @@ export default function Dashboard() {
   const [lastUpdated, setLastUpdated] = useState<string>("");
   const weeklyHasData = weeklyAttendance.some(d => d.percentage > 0);
 
-  const today = new Date();
+  // Live clock for local time display
+  const [now, setNow] = useState<Date>(new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const today = now;
   const dateString = today.toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
@@ -32,6 +39,16 @@ export default function Dashboard() {
   // Local-time-based greeting
   const hour = today.getHours();
   const greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+
+  // Local time and timezone label
+  const timeString = today.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const tzPart = new Intl.DateTimeFormat(undefined, { timeZoneName: 'short' })
+    .formatToParts(today)
+    .find(p => p.type === 'timeZoneName')?.value;
+  const offsetMinutes = -today.getTimezoneOffset();
+  const offsetHours = offsetMinutes / 60;
+  const gmtOffset = `GMT${offsetHours >= 0 ? '+' : ''}${offsetHours}`;
+  const timeWithZone = `${timeString} ${tzPart || gmtOffset}`;
 
   // Calculate stats from real employees list
   const employeeList = Array.isArray(employees) ? employees : [];
@@ -187,7 +204,7 @@ export default function Dashboard() {
             <h1 className="text-3xl font-bold text-foreground">
               {greeting}, {user?.full_name || 'Admin'}!
             </h1>
-            <p className="text-muted-foreground mt-2">Today is {dateString}</p>
+            <p className="text-muted-foreground mt-2">Today is {dateString} • {timeWithZone}</p>
           </div>
           <div className="flex items-center gap-3">
             {lastUpdated && (

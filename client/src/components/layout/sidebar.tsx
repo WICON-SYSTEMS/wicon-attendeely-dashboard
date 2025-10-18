@@ -104,6 +104,7 @@ export function Sidebar() {
               >
                 Logout <LogOut className="h-4 w-4" />
               </Button>
+              <p className="mt-2 text-[11px] text-muted-foreground">© 2025 WiCon Ltd</p>
             </div>
           </div>
         </div>

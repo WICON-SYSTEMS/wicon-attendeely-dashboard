@@ -109,7 +109,7 @@ export default function ContactPage() {
                 gain operational visibility, and automate repetitive administrative tasks with secure, reliable platforms.
               </p>
               <p className="text-muted-foreground">
-                The MINJEC Attendance System is engineered for accuracy and scalability, from employee onboarding to attendance tracking, payroll calculations,
+                The Attendeely Attendance System is engineered for accuracy and scalability, from employee onboarding to attendance tracking, payroll calculations,
                 and reporting. We actively collaborate with stakeholders to deliver features that matter and support that you can count on.
               </p>
               <p className="text-muted-foreground">
