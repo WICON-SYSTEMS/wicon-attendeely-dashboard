@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import type { ApiResponse } from "@shared/schema";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://minjec-attendance-backend-1.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://wicon-attendeely-backend.onrender.com";
 
 // Token management
 const TOKEN_STORAGE_KEY = "auth_token";

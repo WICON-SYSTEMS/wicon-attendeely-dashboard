@@ -20,6 +20,8 @@ export default function Dashboard() {
   const [loadingRecent, setLoadingRecent] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string>("");
   const weeklyHasData = weeklyAttendance.some(d => d.percentage > 0);
+  // KPI snapshot (backend-driven)
+  const [kpi, setKpi] = useState<{ present: number | null; total: number | null; prevPresent: number | null; late: number | null }>({ present: null, total: null, prevPresent: null, late: null });
 
   // Live clock for local time display
   const [now, setNow] = useState<Date>(new Date());
@@ -50,19 +52,21 @@ export default function Dashboard() {
   const gmtOffset = `GMT${offsetHours >= 0 ? '+' : ''}${offsetHours}`;
   const timeWithZone = `${timeString} ${tzPart || gmtOffset}`;
 
-  // Calculate stats from real employees list
+  // Calculate stats from backend trends + employees list
   const employeeList = Array.isArray(employees) ? employees : [];
-  const totalEmployees = employeeList.length;
+  const totalEmployeesLocal = employeeList.length;
   const activeEmployees = employeeList.filter(emp => emp.status === 'active').length;
-  // Attendance is still mock-calculated based on active employees until real attendance API is available
-  const presentToday = Math.floor(activeEmployees * 0.85); // 85% attendance rate
-  const lateArrivals = Math.floor(activeEmployees * 0.08); // 8% late
-  const absentToday = Math.max(activeEmployees - presentToday, 0);
+  const presentToday = kpi.present ?? 0;
+  const totalFromApi = kpi.total ?? null;
+  const totalEmployees = totalFromApi ?? totalEmployeesLocal;
+  const absentToday = totalEmployees != null ? Math.max(totalEmployees - presentToday, 0) : 0;
+  const prevPresent = kpi.prevPresent;
+  const changeValue = prevPresent != null && totalEmployees ? Math.round(((presentToday - prevPresent) / totalEmployees) * 100) : null;
 
   const stats = [
     {
       title: "Total Employees",
-      value: totalEmployees.toString(),
+      value: (totalEmployees ?? 0).toString(),
       icon: Users,
       color: "bg-sky-500 text-white"
     },
@@ -76,25 +80,25 @@ export default function Dashboard() {
       title: "Present Today",
       value: presentToday.toString(),
       icon: UserCheck,
-      change: "85.2%",
-      changeText: "attendance rate",
-      positive: true,
+      change: changeValue != null ? `${changeValue > 0 ? '+' : ''}${changeValue}%` : undefined,
+      changeText: changeValue != null ? "vs yesterday" : "",
+      positive: changeValue != null ? changeValue >= 0 : null,
       color: "bg-emerald-100 text-emerald-700"
     },
     {
       title: "Late Arrivals",
-      value: lateArrivals.toString(),
+      value: (kpi.late ?? "-").toString(),
       icon: Clock,
-      change: "+3",
-      changeText: "from yesterday",
-      positive: false,
+      change: undefined,
+      changeText: "",
+      positive: null,
       color: "bg-amber-100 text-amber-700"
     },
     {
       title: "Absent Today",
       value: absentToday.toString(),
       icon: Calendar,
-      change: "Absent employees",
+      change: "",
       changeText: "",
       positive: null,
       color: "bg-rose-100 text-rose-700"
@@ -119,6 +123,15 @@ export default function Dashboard() {
         });
         setWeeklyAttendance(days);
         setLastUpdated(new Date().toLocaleString());
+        // Update KPI from latest trends
+        const last = all.length ? all[all.length - 1] : null;
+        const prev = all.length > 1 ? all[all.length - 2] : null;
+        setKpi(k => ({
+          present: last && typeof last.present === 'number' ? last.present : null,
+          total: last && typeof last.total_employees === 'number' ? last.total_employees : null,
+          prevPresent: prev && typeof prev.present === 'number' ? prev.present : null,
+          late: last && typeof last.late === 'number' ? last.late : k.late,
+        }));
       } catch (e) {
         // swallow errors on dashboard load
       } finally {
@@ -154,6 +167,36 @@ export default function Dashboard() {
     loadRecent();
   }, [employees]);
 
+  // Load KPI from /attendance/all daily_breakdown (today & yesterday) to include 'late'
+  useEffect(() => {
+    const loadKpiFromAll = async () => {
+      try {
+        const fmt = (d: Date) => d.toISOString().slice(0,10);
+        const todayDate = new Date();
+        const yest = new Date(todayDate);
+        yest.setDate(todayDate.getDate() - 1);
+        const resp = await getAllAttendance({
+          page: 1,
+          limit: 1,
+          start_date: fmt(yest),
+          end_date: fmt(todayDate),
+          include_analytics: true,
+          include_trends: false,
+        });
+        const days = resp.daily_breakdown || [];
+        const last = days.length ? days[days.length - 1] : null;
+        const prev = days.length > 1 ? days[days.length - 2] : null;
+        setKpi(k => ({
+          present: last ? last.present : k.present,
+          total: last ? last.total_employees : k.total,
+          prevPresent: prev ? prev.present : k.prevPresent,
+          late: last ? last.late : k.late,
+        }));
+      } catch {}
+    };
+    loadKpiFromAll();
+  }, []);
+
   const handleRefresh = async () => {
     setLoadingTrends(true);
     setLoadingRecent(true);
@@ -172,6 +215,40 @@ export default function Dashboard() {
           return { day: label, percentage: pct, title };
         });
         setWeeklyAttendance(days);
+        const last = all.length ? all[all.length - 1] : null;
+        const prev = all.length > 1 ? all[all.length - 2] : null;
+        setKpi(k => ({
+          present: last && typeof last.present === 'number' ? last.present : null,
+          total: last && typeof last.total_employees === 'number' ? last.total_employees : null,
+          prevPresent: prev && typeof prev.present === 'number' ? prev.present : null,
+          late: last && typeof last.late === 'number' ? last.late : k.late,
+        }));
+      })(),
+      // Refresh KPI from /attendance/all daily_breakdown
+      (async () => {
+        try {
+          const fmt = (d: Date) => d.toISOString().slice(0,10);
+          const todayDate = new Date();
+          const yest = new Date(todayDate);
+          yest.setDate(todayDate.getDate() - 1);
+          const resp = await getAllAttendance({
+            page: 1,
+            limit: 1,
+            start_date: fmt(yest),
+            end_date: fmt(todayDate),
+            include_analytics: true,
+            include_trends: false,
+          });
+          const days = resp.daily_breakdown || [];
+          const last = days.length ? days[days.length - 1] : null;
+          const prev = days.length > 1 ? days[days.length - 2] : null;
+          setKpi(k => ({
+            present: last ? last.present : k.present,
+            total: last ? last.total_employees : k.total,
+            prevPresent: prev ? prev.present : k.prevPresent,
+            late: last ? last.late : k.late,
+          }));
+        } catch {}
       })(),
       (async () => {
         const resp = await getAllAttendance({ page: 1, limit: 8 });
@@ -220,15 +297,29 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
+            const titleColor =
+              stat.title === 'Present Today' ? 'text-emerald-700' :
+              stat.title === 'Absent Today' ? 'text-rose-700' :
+              stat.title === 'Late Arrivals' ? 'text-amber-700' :
+              stat.title === 'Active Employees' ? 'text-emerald-700' :
+              stat.title === 'Total Employees' ? 'text-indigo-700' :
+              'text-muted-foreground';
+            const valueColor =
+              stat.title === 'Present Today' ? 'text-emerald-700' :
+              stat.title === 'Absent Today' ? 'text-rose-700' :
+              stat.title === 'Late Arrivals' ? 'text-amber-700' :
+              stat.title === 'Active Employees' ? 'text-emerald-700' :
+              stat.title === 'Total Employees' ? 'text-indigo-700' :
+              'text-foreground';
             return (
               <Card key={index} className="shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground">
+                      <p className={`text-sm font-medium ${titleColor}`}>
                         {stat.title}
                       </p>
-                      <p className="text-3xl font-bold text-foreground" data-testid={`stat-${stat.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                      <p className={`text-3xl font-bold ${valueColor}`} data-testid={`stat-${stat.title.toLowerCase().replace(/\s+/g, '-')}`}>
                         {stat.value}
                       </p>
                     </div>

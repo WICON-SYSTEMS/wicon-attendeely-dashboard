@@ -278,40 +278,40 @@ export default function AttendancePage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Present</CardTitle>
+              <CardTitle className="text-emerald-700">Present</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-green-600">{presentCount}</div>
+              <div className="text-3xl font-bold text-emerald-700">{presentCount}</div>
               <p className="text-sm text-muted-foreground mt-2">{summaryMode === 'daily' ? 'Employees present (day)' : 'Present days (period)'}
               </p>
             </CardContent>
           </Card>
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Late</CardTitle>
+              <CardTitle className="text-amber-700">Late</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-yellow-600">{lateCount}</div>
+              <div className="text-3xl font-bold text-amber-700">{lateCount}</div>
               <p className="text-sm text-muted-foreground mt-2">{summaryMode === 'daily' ? 'Late arrivals (day)' : 'Late days (period)'}
               </p>
             </CardContent>
           </Card>
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Absent</CardTitle>
+              <CardTitle className="text-rose-700">Absent</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-red-600">{absentCount}</div>
+              <div className="text-3xl font-bold text-rose-700">{absentCount}</div>
               <p className="text-sm text-muted-foreground mt-2">{summaryMode === 'daily' ? 'Not checked in (day)' : 'Absent days (period)'}
               </p>
             </CardContent>
           </Card>
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Checked-out</CardTitle>
+              <CardTitle className="text-indigo-700">Checked-out</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-blue-600">{checkedOut}</div>
+              <div className="text-3xl font-bold text-indigo-700">{checkedOut}</div>
               <p className="text-sm text-muted-foreground mt-2">Completed work (day)</p>
             </CardContent>
           </Card>
@@ -347,8 +347,8 @@ export default function AttendancePage() {
                     const initials = emp ? `${emp.first_name[0]}${emp.last_name[0]}`.toUpperCase() : (r.employee_name ? r.employee_name[0] : '?');
                     const dept = r.department || emp?.department || "-";
                     const badgeClass = r.status === 'checked_out'
-                      ? 'px-2 py-1 rounded-full text-xs bg-green-100 text-green-700'
-                      : 'px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700';
+                      ? 'px-2 py-1 rounded-full text-xs bg-indigo-100 text-indigo-700'
+                      : 'px-2 py-1 rounded-full text-xs bg-emerald-100 text-emerald-700';
                     return (
                       <tr key={r.attendance_id} className="border-b last:border-b-0">
                         <td className="p-4 font-medium">

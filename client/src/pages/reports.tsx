@@ -33,9 +33,9 @@ function TrendsChart({ trends }: { trends: AttendanceTrends | null }) {
           <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="present" stroke="#16a34a" strokeWidth={2} dot={false} name="Present" />
-          <Line type="monotone" dataKey="absent" stroke="#ef4444" strokeWidth={2} dot={false} name="Absent" />
-          <Line type="monotone" dataKey="checked_out" stroke="#3b82f6" strokeWidth={2} dot={false} name="Checked-out" />
+          <Line type="monotone" dataKey="present" stroke="#10b981" strokeWidth={2} dot={false} name="Present" />
+          <Line type="monotone" dataKey="absent" stroke="#f43f5e" strokeWidth={2} dot={false} name="Absent" />
+          <Line type="monotone" dataKey="checked_out" stroke="#6366f1" strokeWidth={2} dot={false} name="Checked-out" />
           <Line type="monotone" dataKey="still_in" stroke="#a855f7" strokeWidth={2} dot={false} name="Still in" />
         </LineChart>
       </ResponsiveContainer>
@@ -268,10 +268,10 @@ export default function ReportsPage() {
 
               {/* KPI cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="shadow-sm"><CardHeader><CardTitle>Present Days</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-green-600">{empData?.employee_statistics.total_days_present ?? 0}</div></CardContent></Card>
-                <Card className="shadow-sm"><CardHeader><CardTitle>Late Days</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-yellow-600">{empData?.employee_statistics.total_days_late ?? 0}</div></CardContent></Card>
-                <Card className="shadow-sm"><CardHeader><CardTitle className="text-red-600" >Absent Days</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-red-600">{empData?.employee_statistics.total_days_absent ?? 0}</div></CardContent></Card>
-                <Card className="shadow-sm"><CardHeader><CardTitle>Total Hours</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold">{empData?.employee_statistics.total_hours_worked ?? 0}</div></CardContent></Card>
+                <Card className="shadow-sm"><CardHeader><CardTitle className="text-emerald-700">Present Days</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-emerald-700">{empData?.employee_statistics.total_days_present ?? 0}</div></CardContent></Card>
+                <Card className="shadow-sm"><CardHeader><CardTitle className="text-amber-700">Late Days</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-amber-700">{empData?.employee_statistics.total_days_late ?? 0}</div></CardContent></Card>
+                <Card className="shadow-sm"><CardHeader><CardTitle className="text-rose-700">Absent Days</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-rose-700">{empData?.employee_statistics.total_days_absent ?? 0}</div></CardContent></Card>
+                <Card className="shadow-sm"><CardHeader><CardTitle className="text-indigo-700">Total Hours</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold text-indigo-700">{empData?.employee_statistics.total_hours_worked ?? 0}</div></CardContent></Card>
               </div>
 
               {/* Records table */}
@@ -408,7 +408,7 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Total Employees</CardTitle>
+              <CardTitle className="text-blue-500">Total Employees</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{kpi?.total_employees ?? 0}</div>
@@ -417,28 +417,28 @@ export default function ReportsPage() {
           </Card>
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Present Days</CardTitle>
+              <CardTitle className="text-emerald-500">Present Days</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-green-600">{kpi?.total_present_days ?? 0}</div>
+              <div className="text-3xl font-bold text-emerald-700">{kpi?.total_present_days ?? 0}</div>
               <p className="text-sm text-muted-foreground mt-2">Total attendance days</p>
             </CardContent>
           </Card>
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Late Days</CardTitle>
+              <CardTitle className="text-amber-700">Late Days</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-yellow-600">{kpi?.total_late_days ?? 0}</div>
+              <div className="text-3xl font-bold text-amber-700">{kpi?.total_late_days ?? 0}</div>
               <p className="text-sm text-muted-foreground mt-2">Late arrivals</p>
             </CardContent>
           </Card>
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Absent Days</CardTitle>
+              <CardTitle className="text-rose-700">Absent Days</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-red-600">{kpi?.total_absent_days ?? 0}</div>
+              <div className="text-3xl font-bold text-rose-700">{kpi?.total_absent_days ?? 0}</div>
               <p className="text-sm text-muted-foreground mt-2">Unexcused absences</p>
             </CardContent>
           </Card>
@@ -448,28 +448,28 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Total Hours Worked</CardTitle>
+              <CardTitle className="text-indigo-700">Total Hours Worked</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{kpi?.total_hours_worked ?? 0}</div>
+              <div className="text-3xl font-bold text-indigo-700">{kpi?.total_hours_worked ?? 0}</div>
               <p className="text-sm text-muted-foreground mt-2">Sum of hours in period</p>
             </CardContent>
           </Card>
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Attendance Rate</CardTitle>
+              <CardTitle className="text-emerald-700">Attendance Rate</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{kpi?.overall_attendance_rate ?? 0}%</div>
+              <div className="text-3xl font-bold text-emerald-700">{kpi?.overall_attendance_rate ?? 0}%</div>
               <p className="text-sm text-muted-foreground mt-2">Across all employees</p>
             </CardContent>
           </Card>
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Punctuality Rate</CardTitle>
+              <CardTitle className="text-violet-700">Punctuality Rate</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{kpi?.overall_punctuality_rate ?? 0}%</div>
+              <div className="text-3xl font-bold text-violet-700">{kpi?.overall_punctuality_rate ?? 0}%</div>
               <p className="text-sm text-muted-foreground mt-2">Across all employees</p>
             </CardContent>
           </Card>
@@ -533,10 +533,10 @@ export default function ReportsPage() {
                             </div>
                           </td>
                           <td className="p-4">{row.department}</td>
-                          <td className="p-4">{row.total_days_present}</td>
-                          <td className="p-4">{row.total_days_late}</td>
-                          <td className="p-4">{row.total_days_absent}</td>
-                          <td className="p-4">{row.total_hours_worked}</td>
+                          <td className="p-4 text-emerald-700 font-semibold">{row.total_days_present}</td>
+                          <td className="p-4 text-amber-700 font-semibold">{row.total_days_late}</td>
+                          <td className="p-4 text-rose-700 font-semibold">{row.total_days_absent}</td>
+                          <td className="p-4 text-indigo-700 font-semibold">{row.total_hours_worked}</td>
                         </tr>
                       );
                     })}
